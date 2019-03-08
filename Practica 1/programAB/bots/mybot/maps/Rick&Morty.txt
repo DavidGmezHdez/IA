@@ -1,0 +1,59 @@
+
+     <category>
+        <pattern> * </pattern>
+    <template>
+        <set var="plataforma"><star/></set>
+        A qué género pertenece
+    </template>
+    </category>
+
+    <addtoset>
+        <name>series<get var="plataforma"/>
+    </addtoset>
+
+
+    <category>
+        <pattern> * </pattern>
+        <that>A qué género pertenece</that> 
+    <template>
+        <set var="género"><star/></set>
+        De qué va la serie
+    </template>
+    </category>
+
+
+    <category>
+        <pattern> * </pattern>
+        <that>De qué va la serie</that> 
+    <template>
+        <set var="descripción"><star/></set>
+        Perfecto
+    </template>
+    </category>
+
+    <addtomap>
+        <name><get var="serie"/></name>
+        <key>serie</key>
+        <value><get var="serie"/></value>
+    <addtomap>
+
+
+    <addtomap>
+        <name><get var="serie"/></name>
+        <key>plataforma</key>
+        <value><get var="plataforma"/></value>
+    <addtomap>
+
+
+    <addtomap>
+        <name><get var="serie"/></name>
+        <key>género</key>
+        <value><get var="género"/></value>
+    <addtomap>
+
+
+    <addtomap>
+        <name><get var="serie"/></name>
+        <key>descripción</key>
+        <value><get var="descripción"/></value>
+    <addtomap>
