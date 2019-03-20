@@ -212,5 +212,10 @@ aiml version="2.0">
 <category>
     <pattern> * escogerte a ti</pattern>
     <template>Porque soy una persona decidida, sincera y dispuesta a dar todo lo de mi para apoyar a la empresa</template>
-</category>
+</category>      
 </aiml>
+
+
+
+
+

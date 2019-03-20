@@ -582,4 +582,62 @@
 	<get var="solucion"/>
 	</template>
 	</category>
+	<category>
+	
+	<!-- Regla que concatena una lista de palabras mediante un "@" -->
+	<pattern> code_fields * </pattern>
+	<template> 
+	  <think>
+		<set var="tmp"><star/></set>
+		<set var="solucion"><first><get var="tmp"/></first></set>
+		<set var="tmp"><rest><get var="tmp"/></rest></set>
+		<condition var="tmp">
+			<li value="NIL">
+			</li>
+			<li>
+				<set var="solucion"><get var="solucion"/>@<first><get var="tmp"/></first></set>
+				<set var="tmp"><rest><get var="tmp"/></rest></set>
+				<loop/>
+			</li>
+		</condition>
+	  </think>
+	<get var="solucion"/>
+	</template>
+	</category>
+
+
+<category>
+	<pattern> decode_fields * </pattern>
+<template>
+<think>
+		<set var="palabra"></set>
+		<set var="solucion"></set>
+		<set var="tmp"><star/></set>
+		<set var="tmp"> <explode><get var="tmp"/></explode> </set>
+		<set var="caracter"><first><get var="tmp"/></first></set>
+		<set var="tmp"><rest><get var="tmp"/></rest></set>
+			<condition var="caracter">
+			<li value="NIL">
+			<set var="solucion"><get var="solucion"/> <get var="palabra"/></set>
+			</li>
+			<li value="@">
+		<set var="solucion"><get var="solucion"/> <get var="palabra"/></set>
+		<set var="palabra"></set>
+		<set var="caracter"><first><get var="tmp"/></first></set>
+		<set var="tmp"><rest><get var="tmp"/></rest></set>
+	<loop/>
+	</li>
+	<li>
+	<set var="palabra"><get var="palabra"/><get var="caracter"/></set>
+	<set var="caracter"><first><get var="tmp"/></first></set>
+	<set var="tmp"><rest><get var="tmp"/></rest></set>
+	<loop/>
+	</li>
+		</condition>
+		</think>
+<get var="solucion"/>
+</template>
+</category>
+
+	
 </aiml>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml version="2.0">
+
+    <!-- Consultar descripción de una serie -->
+    <category>
+        <pattern> De que va  (la serie) <set>seriesnetflix</set> </pattern>
+    <template>
+        <srai>decode <map><name><star/></name>descripcion</map></srai>
+    </template>
+    </category>
+        
+    <category>
+        <pattern> De que va la serie  * </pattern>
+    <template>
+        <think><set var="serie"><star/></set></think>No esta en el catalogo, a tu orden la aniado
+    </template>
+    </category>
+
+
+    <category>
+        <pattern> [Si Anadela] ^</pattern>
+        <that>No esta en el catalogo, a tu orden la aniado</that>
+    <template>
+        Ok, crea en la carpeta maps un archivo con el nombre de la serie. Cuando hayas terminado reiniciame y al
+        volver, pideme que anada la serie por su nombre.
+    </template>
+    </category>
+
+    <!-- Añadir serie al catálogo -->
+    <category>
+        <pattern> Anade la serie *</pattern>
+    <template>
+      <think><set name="serie"><star/></set></think>  Perfecto, te voy a hacer preguntas sobre ella.
+       Indicame en que  <set name="topic">plataforma</set> se ofrece
+    </template>
+    </category>
+
+
+    <topic name="plataforma">
+    <category>
+        <pattern>*</pattern>
+    <template>
+    <addtoset>
+        <name>series<star/></name>
+        <key><get name="serie"/></key>
+    </addtoset>
+        Añadida la serie <get name="serie"/> al catalogo de <star/>. Quieres seguir anadiendo <set name="topic">informacion</set>.
+    </template>
+    </category>
+    </topic>
+
+    <!-- Añadir informacion de la serie -->
+
+    <category>
+        <pattern>Anade informacion de la serie *</pattern>
+    <template>
+    <think><set name="serie"><star/></set></think>
+        ¿Desea anadir <set name="topic">informacion</set> de la serie <get name="serie"/> ?
+    </template>
+    </category>
+
+    <topic name="informacion">
+    <category>
+        <pattern>Si ^</pattern>
+    <template>
+    <addtomap>
+        <name><get name="serie"/></name>
+        <key>serie</key>
+        <value><star index = "2"/></value>
+    </addtomap>
+        Perfecto, dime el <set name="topic">genero</set> al que pertenece
+    </template>
+    </category>
+
+    <category>
+        <pattern>No ^</pattern>
+    <template>
+        Avisame si quieres que anada informacion sobre una serie en concreto
+    </template>
+    </category>
+
+    </topic>
+
+    <topic name="genero">
+    <category>
+        <pattern>*</pattern>
+    <template>
+      <think><set name="genero"><star/></set></think>  
+        <addtomap>
+            <name><get name="serie"/></name>
+            <key>Genero</key>
+            <value><star/></value>
+        </addtomap>
+            Dime la <set name="topic">descripcion</set> de la serie
+    </template>
+    </category>
+
+    </topic>
+
+    <topic name="descripcion">
+    <category>
+        <pattern>*</pattern>
+    <template>
+      <think><set name="descripcion"><star/></set></think>  
+        <addtomap>
+            <name><get name="serie"/></name>
+            <key>Descripcion</key>
+            <value><srai>code <star/></srai></value>
+        </addtomap>
+            Dime los <set name="topic">idiomas</set> en los que está disponible la serie
+    </template>
+    </category>
+    </topic>
+
+
+    <topic name="idiomas">
+    <category>
+        <pattern>*</pattern>
+    <template>
+        <addtomap>
+            <name><get name="serie"/></name>
+            <key>Idiomas</key>
+            <value><srai>code_fields <star/></srai></value>
+        </addtomap>
+            Dime la lista de los <set name="topic">subtitulos</set> en los que esta disponoble la serie 
+    </template>
+    </category>
+    </topic>
+
+
+    <topic name="subtitulos">
+    <category>
+        <pattern>*</pattern>
+    <template>
+        <addtomap>
+            <name><get name="serie"/></name>
+            <key>Subtitulos</key>
+            <value><srai>code_fields <star/></srai></value>
+        </addtomap>
+            Conoces alguna <set name="topic"> web </set> de la serie <get name="serie"/>
+    </template>
+    </category>
+    </topic>
+
+
+    <topic name="web">
+    <category>
+        <pattern>*</pattern>
+    <template>
+        <addtomap>
+            <name><get name="serie"/></name>
+            <key>web</key>
+            <value><srai>code <star/></srai></value>
+        </addtomap>
+            Ya he añadido la informacion basica de la serie <get name="serie"/> . Deseas anadir <set name="topic">capitulos</set>?
+    </template>
+    </category>
+    </topic>
+
+
+
+    <!-- Añadir temporada -->
+    <category>
+        <pattern>Anade la temporada <set>number</set> a la serie * </pattern>
+    <template>
+        <think><set name="serie"><star index="2"/></set></think>
+        <think><set name="temporada"><star index="1"/></set></think>  
+        <addtomap>
+            <name><get name="serie"/></name>
+            <key>temporada<get name="temporada"/></key>
+            <value></value>
+        </addtomap>
+        Temporada añadida, ¿quieres añadir <set name="topic">capitulos</set>?
+    </template>
+    </category>
+
+  <!-- Añadir capitulos -->
+   <category>
+        <pattern>Anade un (nuevo) capitulo [a de] la temporada <set>number</set> de (la serie) *</pattern>
+    <template>
+            <think><set name="serie"><star index="2"/></set></think>
+            <think><set name="temporada"><star index="1"/></set></think>  
+            Dime el <set name="topic">titulo</set> del capitulo
+    </template>
+    </category>
+
+
+    <topic name="capitulos">
+    <category>
+        <pattern>No ^</pattern>
+    <template>
+            Perfecto
+    </template>
+    </category>
+
+    <category>
+        <pattern>Si ^</pattern>
+    <template>  
+            Dime el <set name="topic">titulo</set> del capitulo
+    </template>
+    </category>
+
+    </topic>
+ 
+    <topic name="titulo">
+    <category>
+        <pattern>*</pattern>
+    <template>
+            <think><set name="titulo"><srai>code <star/> </srai></set></think>
+            Dime la <set name="topic">duracion</set> del capitulo
+    </template>
+    </category>
+
+    </topic>
+
+
+    <topic name="duracion">
+    <category>
+        <pattern><set>number</set></pattern>
+    <template>
+            <think><set name="capitulos"><srai>decode_fields <map><name><get name="serie"/></name>temporada<get name="temporada"/></map></srai></set></think>
+            <!-- Error, coge lo que habia en la temporada, pero si esta esta vacia, te pone un capitulo sin respuesta SOLUCIONAR -->
+            <modifymap>
+                <name><get name="serie"/></name>
+                <key>temporada<get name="temporada"/></key>
+                <value><srai>code_fields <get name="capitulos"/> <get name="titulo"/> <star/> </srai></value>
+            </modifymap>
+            El capitulo ha sido añadido a la temporada, quieres seguir añadiendo <set name="topic">capitulos</set>?
+    </template>
+    </category>
+    </topic>
+
+
+
+</aiml>
