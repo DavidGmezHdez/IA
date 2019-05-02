@@ -130,7 +130,6 @@ bool ComportamientoJugador::HayObstaculoDelante(estado &st){
 
 
 
-
 struct ComparaEstados{
 	bool operator()(const estado &a, const estado &n) const{
 		if ((a.fila > n.fila) or (a.fila == n.fila and a.columna > n.columna) or
@@ -284,33 +283,37 @@ bool ComportamientoJugador::pathFinding_Anchura(const estado &origen, const esta
 	return false;
 }
 
-int coste(const nodo n1){
-	int coste = 0;
-	char nodo = mapaResultado[n1.st.fila][n1.st.columna];
-      if(nodo == 'S')
-        coste = 1;
-      else if(nodo1 == 'T')
-        coste = 2;
-      else if(nodo1 == 'B')
-        coste = 5;
-      else if(nodo1 == 'A')
-        coste = 10;
+
+
+int ComportamientoJugador::coste(char c){
+	int coste;
+	if(c == 'S')
+		coste = 1;
+	if(c == 'T')
+		coste = 2;
+	if(c =='B')
+		coste = 5;
+	if(c =='A')
+		coste = 10;
 	
 	return coste;
 }
+
 
 bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan){
 	//Borro la lista
 	cout << "Calculando plan\n";
 	plan.clear();
 	set<estado,ComparaEstados> generados; // Lista de Cerrados
-	priority_queue<nodo,vector<nodo>,comparacion> cola;			// Lista de Abiertos
+	priority_queue<nodo> cola;			// Lista de Abiertos
 
   	nodo current;
 	current.st = origen;
 	current.secuencia.empty();
+	
 
 	cola.push(current);
+	
 
   while (!cola.empty() and (current.st.fila!=destino.fila or current.st.columna != destino.columna)){
 
@@ -322,15 +325,17 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		hijoTurnR.st.orientacion = (hijoTurnR.st.orientacion+1)%4;
 		if (generados.find(hijoTurnR.st) == generados.end()){
 			hijoTurnR.secuencia.push_back(actTURN_R);
+			hijoTurnR.coste = 1;
 			cola.push(hijoTurnR);
-
 		}
+
 
 		// Generar descendiente de girar a la izquierda
 		nodo hijoTurnL = current;
 		hijoTurnL.st.orientacion = (hijoTurnL.st.orientacion+3)%4;
 		if (generados.find(hijoTurnL.st) == generados.end()){
 			hijoTurnL.secuencia.push_back(actTURN_L);
+			hijoTurnL.coste = 1;
 			cola.push(hijoTurnL);
 		}
 
@@ -339,6 +344,7 @@ bool ComportamientoJugador::pathFinding_CostoUniforme(const estado &origen, cons
 		if (!HayObstaculoDelante(hijoForward.st)){
 			if (generados.find(hijoForward.st) == generados.end()){
 				hijoForward.secuencia.push_back(actFORWARD);
+				hijoForward.coste = coste(mapaResultado[hijoForward.st.fila][hijoForward.st.columna]);
 				cola.push(hijoForward);
 			}
 		}
