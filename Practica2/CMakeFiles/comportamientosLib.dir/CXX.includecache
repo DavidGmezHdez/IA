@@ -43,6 +43,10 @@ comportamientos/comportamiento.hpp
 /mnt/c/users/david/GitHub/IA/Practica2/Comportamientos_Jugador/comportamientos/comportamiento.hpp
 list
 -
+cmath
+-
+queue
+-
 
 /mnt/c/users/david/GitHub/IA/Practica2/src/comportamientos/comportamiento.cpp
 comportamientos/comportamiento.hpp

@@ -53,6 +53,10 @@ comportamientos/comportamiento.hpp
 Comportamientos_Jugador/comportamientos/comportamiento.hpp
 list
 -
+cmath
+-
+queue
+-
 
 include/comportamientolib.hpp
 comportamientos/comportamiento.hpp

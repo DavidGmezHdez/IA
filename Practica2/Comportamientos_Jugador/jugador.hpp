@@ -4,14 +4,14 @@
 #include "comportamientos/comportamiento.hpp"
 
 #include <list>
+#include <cmath>
+#include <queue>
 
 struct estado {
   int fila;
   int columna;
   int orientacion;
 };
-
-
 
 struct nodo{
   estado st;
@@ -25,7 +25,21 @@ struct nodo{
 	}
 };
 
+struct nodo2{
+  estado st;
+	list<Action> secuencia;
+  double heuristica;
+  int coste;
+  double prioridad;
 
+	bool operator <(const nodo2 &n) const{
+		if(prioridad == n.prioridad)
+			return secuencia.size() > n.secuencia.size();
+		else
+			return prioridad > n.prioridad;
+	}
+
+};
 class ComportamientoJugador : public Comportamiento {
   public:
     ComportamientoJugador(unsigned int size) : Comportamiento(size) {
@@ -69,12 +83,21 @@ class ComportamientoJugador : public Comportamiento {
     // Métodos privados de la clase
     Action ultimaAccion;
     bool hayPlan;
+    bool posicion;
+
     bool pathFinding(int level, const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_Profundidad(const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_Anchura(const estado &origen, const estado &destino, list<Action> &plan);
     bool pathFinding_CostoUniforme(const estado &origen, const estado &destino, list<Action> &plan);
-    int coste(char c); 
+    bool pathFinding_Reto(const estado &origen, const estado &destino, list<Action> &plan);
+    bool pathFinding_buscarPK(const int pos,list<Action> &plan);
+    int coste(char c);
+    double calculoDistancia(const estado  &actual, const estado &destino);
+    double calculoPrioridad(nodo2 nodo);
     
+
+
+    void PintarMapa(const Sensores &sensores);
     void PintaPlan(list<Action> plan);
     bool HayObstaculoDelante(estado &st);
 
