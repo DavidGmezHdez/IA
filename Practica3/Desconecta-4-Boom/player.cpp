@@ -54,19 +54,19 @@ double ValoracionTest(const Environment &estado, int jugador){
 // ------------------- Los tres metodos anteriores no se pueden modificar
 
 double contadorFichas(const Environment &E,int jugador){
-   int enemigo, bomba, bomba_enemigo;
+   int rival, bomba, bomba_rival;
    int contiguas = 0, contiguas_rival = 0;
    double valor = 0;
 
       if(jugador==1){
          bomba = 4;
-         enemigo = 2;
-         bomba_enemigo = 5;
+         rival = 2;
+         bomba_rival = 5;
       }
       else{
          bomba = 5;
-         enemigo = 1;
-         bomba_enemigo = 4;
+         rival = 1;
+         bomba_rival = 4;
       }
 
    // Contamos las fichas por filas
@@ -81,13 +81,20 @@ double contadorFichas(const Environment &E,int jugador){
    */
    for(int i=0;i<7;i++){
       for(int j=0;j<7;j++){
-         if(E.See_Casilla(i,j)==jugador  || E.See_Casilla(i,j) == bomba)
-            contiguas++;
+         if(E.See_Casilla(i,j) == 0){
             valor-=contiguas;
-            contiguas_rival = 0;
-         if(E.See_Casilla(i,j)==enemigo || E.See_Casilla(i,j) == bomba_enemigo){
-            contiguas_rival++;
             valor+=contiguas_rival;
+            contiguas = 0;
+            contiguas_rival = 0;
+         }
+         else if(E.See_Casilla(i,j)==jugador  || E.See_Casilla(i,j) == bomba){
+            contiguas++;
+            valor+=contiguas_rival;
+            contiguas_rival = 0;
+         }
+         else if(E.See_Casilla(i,j)==rival || E.See_Casilla(i,j) == bomba_rival){
+            contiguas_rival++;
+            valor-=contiguas;
             contiguas = 0;
          }
       }
@@ -105,13 +112,20 @@ double contadorFichas(const Environment &E,int jugador){
    */
    for(int i=0;i<7;i++){
       for(int j=0;j<7;j++){
-         if(E.See_Casilla(j,i)==jugador || E.See_Casilla(j,i) == bomba)
-            contiguas++;
+         if(E.See_Casilla(j,i) == 0){
             valor-=contiguas;
-            contiguas_rival = 0;
-         if(E.See_Casilla(j,i)==enemigo || E.See_Casilla(j,i) == bomba_enemigo){
-            contiguas_rival++;
             valor+=contiguas_rival;
+            contiguas = 0;
+            contiguas_rival = 0;
+         }
+         else if(E.See_Casilla(j,i)==jugador || E.See_Casilla(j,i) == bomba){
+            contiguas++;
+            valor+=contiguas_rival;
+            contiguas_rival = 0;
+         }
+         else if(E.See_Casilla(j,i)==rival || E.See_Casilla(j,i) == bomba_rival){
+            contiguas_rival++;
+            valor-=contiguas;
             contiguas = 0;
          }
       }
@@ -131,13 +145,20 @@ double contadorFichas(const Environment &E,int jugador){
       for(int j = 3; j < 7; j++) {
          for(int k = 0; k < 4; k++) {
             if(i+k==7 || j-k==7) break;
-            if(E.See_Casilla(i+k,j-k)==jugador || E.See_Casilla(i+k,j-k) == bomba)
-               contiguas++;
+            if(E.See_Casilla(i+k,j-k) == 0){
                valor-=contiguas;
-               contiguas_rival = 0;
-            if(E.See_Casilla(i+k,j-k)==enemigo || E.See_Casilla(i+k,j-k) == bomba_enemigo){
-               contiguas_rival++;
                valor+=contiguas_rival;
+               contiguas = 0;
+               contiguas_rival = 0;
+            }
+            else if(E.See_Casilla(i+k,j-k)==jugador || E.See_Casilla(i+k,j-k) == bomba){
+               contiguas++;
+               valor+=contiguas_rival;
+               contiguas_rival = 0;
+            }
+            else if(E.See_Casilla(i+k,j-k)==rival || E.See_Casilla(i+k,j-k) == bomba_rival){
+               contiguas_rival++;
+               valor-=contiguas;
                contiguas = 0;
             }
          }
@@ -158,13 +179,20 @@ double contadorFichas(const Environment &E,int jugador){
       for(int j = 3; j < 7; j++) {
          for(int k = 0; k < 4; k++) {
             if(i+k==7 || j+k==7) break;
-            if(E.See_Casilla(j+k,i+k)==jugador || E.See_Casilla(j+k,i+k) == bomba)
-               contiguas++;
+            if(E.See_Casilla(i+k,j-k) == 0){
                valor-=contiguas;
-               contiguas_rival = 0;
-            if(E.See_Casilla(j+k,i+k)==enemigo || E.See_Casilla(j+k,i+k) == bomba_enemigo){
-               contiguas_rival++;
                valor+=contiguas_rival;
+               contiguas = 0;
+               contiguas_rival = 0;
+            }
+            else if(E.See_Casilla(j+k,i+k)==jugador || E.See_Casilla(j+k,i+k) == bomba){
+               contiguas++;
+               valor+=contiguas_rival;
+               contiguas_rival = 0;
+            }
+            else if(E.See_Casilla(j+k,i+k)==rival || E.See_Casilla(j+k,i+k) == bomba_rival){
+               contiguas_rival++;
+               valor-=contiguas;
                contiguas = 0;
             }
          }
@@ -172,6 +200,7 @@ double contadorFichas(const Environment &E,int jugador){
    }
    return valor;
 }
+
 
 // Funcion heuristica (ESTA ES LA QUE TENEIS QUE MODIFICAR)
 double Valoracion(const Environment &estado, int jugador){
@@ -191,7 +220,7 @@ double Valoracion(const Environment &estado, int jugador){
     else if (estado.Get_Casillas_Libres()==0)
       return 0;  // Hay un empate global y se ha rellenado completamente el tablero
     else{
-      contadorFichas(estado,jugador);
+      return contadorFichas(estado,jugador);
     }
 }
 
@@ -208,56 +237,57 @@ void JuegoAleatorio(bool aplicables[], int opciones[], int &j){
     }
 }
 
-
-
-double PodaAlfaBeta(const Environment &E, int jugador, int profundidad, 
- int &accion, double alfa, double beta){
-   
-   if(E.JuegoTerminado())
-      return ValoracionTest(E,jugador);
-   else if(profundidad == 0)
-      return Valoracion(E,jugador);
-
-
-   if(profundidad%2==0){
-      int ultima_accion = -1;
-      int acc;
-      double valor;
-      Environment nodoHijo = E.GenerateNextMove(ultima_accion);
-
-      while(ultima_accion<8){
-         valor = PodaAlfaBeta(nodoHijo,jugador,profundidad-1,acc,alfa,beta);
-         if(valor>alfa){
-            alfa = valor;
-            accion = static_cast<Environment::ActionType>(ultima_accion);
-         }
+double PodaAlfaBeta(const Environment &E, int jugador, int profundidad, Environment::ActionType &accion,
+double alpha, double beta){
+if(profundidad == 0 || E.JuegoTerminado()){
+        if(jugador==1)
+            return Valoracion(E, jugador);
+        else
+            return -Valoracion(E, jugador);
          
-         if(beta<=alfa)
-            return beta;
-         
-         nodoHijo = E.GenerateNextMove(ultima_accion);
-      }
-      return alfa;
-   }
-   else{
-      int ultima_accion = -1;
-      int acc;
-      double valor;
-      Environment nodoHijo;
-      while(ultima_accion<8){
-         valor = PodaAlfaBeta(nodoHijo,jugador,profundidad-1,acc,alfa,beta);
-         if(valor<beta){
-            beta = valor;
-            accion = static_cast<Environment::ActionType>(ultima_accion);
-      }
-         
-         if(beta<=alfa)
-            break;
-         
-         nodoHijo = E.GenerateNextMove(ultima_accion);
-      }
-      return beta;
-   }   
+    }
+
+    bool acciones[8];
+    int numeroHijos = E.possible_actions(acciones);
+    int accion_anterior = -1;
+    Environment::ActionType ultima_accion;
+
+    if(jugador == 1)//Si es el jugador que queremos maximizar
+    {
+        double valor = menosinf;
+
+        for(int i=0; i<numeroHijos; i++){
+            Environment nodohijo = E.GenerateNextMove(accion_anterior);
+            double minimax = PodaAlfaBeta(nodohijo, 2, profundidad-1, ultima_accion, alpha, beta);
+            if(minimax>valor){
+                valor = minimax;
+                accion = static_cast<Environment::ActionType>(accion_anterior); 
+            }
+            if(valor>alpha)
+               alpha = valor;
+            if(alpha>=beta)
+                break; //Podamos alpha
+        }
+
+        return valor;
+    }
+    else{
+        double valor = masinf;
+
+        for(int i=0; i<numeroHijos; i++){
+            Environment nodohijo = E.GenerateNextMove(accion_anterior);
+            double minimax = PodaAlfaBeta(nodohijo, 1, profundidad-1, ultima_accion, alpha, beta);
+            if(minimax<valor){
+                valor = minimax;
+                accion = static_cast<Environment::ActionType>(accion_anterior); 
+            }
+            if(valor<beta)
+               beta = valor;
+            if(alpha>=beta)
+                break; // Podamos beta
+        }
+        return valor;
+    }
 }
 
 
@@ -333,9 +363,8 @@ Environment::ActionType Player::Think(){
     alpha = menosinf;
     beta = masinf;
     int acc = -1;
-    valor = PodaAlfaBeta(actual_, jugador_, PROFUNDIDAD_ALFABETA, acc, alpha, beta);
-    accion = static_cast< Environment::ActionType > (acc);
+    valor = PodaAlfaBeta(actual_, jugador_, PROFUNDIDAD_ALFABETA,accion, alpha, beta);
     cout << "Valor MiniMax: " << valor << "  Accion: " << actual_.ActionStr(accion) << endl;
 
     return accion;
-}
+} 
